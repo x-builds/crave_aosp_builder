@@ -260,12 +260,14 @@ jobs:
       # Send Build 'start' notification
     - name: Telegram Notification
       continue-on-error: true
-      uses: xinthink/action-telegram@v1.1
+      uses: Lukasss93/telegram-action@v2
       with:
-        chatId: ${{ secrets.TELEGRAM_TO }}
-        botToken: ${{ secrets.TELEGRAM_TOKEN }}
-        jobStatus: "Build Started"
-        skipSuccess: false
+        status: "Build Started"
+        commit_template: ./configs/telegram/commit.mustache
+        release_template: ./configs/telegram/release.mustache
+      env:
+        TELEGRAM_CHAT: ${{ secrets.TELEGRAM_TO }}
+        TELEGRAM_TOKEN: ${{ secrets.TELEGRAM_TOKEN }}
 
     - name: Cleanup
       run: rm -rf * # This cleans github actions workspace
@@ -400,12 +402,14 @@ jobs:
     - name: Telegram Notification
       if:  ${{ success()  || cancelled() || failure() }}
       continue-on-error: true
-      uses: xinthink/action-telegram@v1.1
+      uses: Lukasss93/telegram-action@v2
       with:
-        chatId: ${{ secrets.TELEGRAM_TO }}
-        botToken: ${{ secrets.TELEGRAM_TOKEN }}
-        jobStatus: ${{ job.status }}
-        skipSuccess: false
+        status: ${{ job.status }}
+        commit_template: ./configs/telegram/commit.mustache
+        release_template: ./configs/telegram/release.mustache
+      env:
+        TELEGRAM_CHAT: ${{ secrets.TELEGRAM_TO }}
+        TELEGRAM_TOKEN: ${{ secrets.TELEGRAM_TOKEN }}
 
       # Only reach this wheter the user killed the workflow.
     - name: Execute if the job is cancelled
